@@ -1,8 +1,9 @@
 import React from 'react';
+import BusSchedules from './BusSchedules';
 
 const App = () => {
   return (
-      <h3>Hello World</h3>
+      <BusSchedules />
   );
 };
 
