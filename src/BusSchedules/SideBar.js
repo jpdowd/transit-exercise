@@ -22,7 +22,6 @@ const SideBar = () => {
   useEffect(async () => {
     const routes = await getBusRoutes();
     setRouteList(routes);
-    console.log(routes);
   }, []);
 
   return (
@@ -31,7 +30,7 @@ const SideBar = () => {
           <Divider />
           <List>
             {routeList && routeList.map((route) => (
-                    <ListItem key={route.route_id} button component={Link} to={`/?routeId=${route.route_id}`}>
+                    <ListItem data-testid={`RouteNav-${route.route_id}`}key={route.route_id} button component={Link} to={`/?routeId=${route.route_id}`}>
                         <ListItemText primary={route.route_label} />
                     </ListItem>
             ))}
