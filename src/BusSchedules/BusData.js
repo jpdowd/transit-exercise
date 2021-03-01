@@ -9,6 +9,7 @@ import {
   getBusRouteStops,
   getDepartureInfo,
 } from "./BusSchedulesAPI";
+import {DateTime} from 'luxon'
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -50,6 +51,11 @@ const BusData = () => {
     setSelectedDirection(event.target.value);
   const updateSelectedStop = (event) => setSelectedStop(event.target.value);
 
+  const getFormattedTime = (timeStamp) => {
+    const dt = DateTime.fromSeconds(timeStamp).setZone('America/Chicago')
+    return dt.toLocaleString(DateTime.TIME_SIMPLE)
+  }
+
   return (
     <>
       <Typography>Test Text</Typography>
@@ -75,7 +81,7 @@ const BusData = () => {
       <br/>
       {/* TODO Clean up */}
       {departures && departures.map((departure, index) => (
-          <Typography key={index}>{departure.departure_time}</Typography>
+          <Typography key={index}>{getFormattedTime(departure.departure_time)}</Typography>
       ))}
     </>
   );
