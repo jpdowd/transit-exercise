@@ -10,13 +10,14 @@ import TextField from "@material-ui/core/TextField";
 import { getBusRoutes } from "./BusSchedulesAPI.js";
 
 const useStyles = makeStyles((theme) => ({
-  sideBar: {
-    height: "100%",
-  },
   filterField: {
-    paddingTop: theme.spacing(1),
-    paddingBotton: theme.spacing(1),
+    marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(1),
   },
+  listContainer: {
+      height: '100vh',
+      overflow: 'auto'
+  }
 }));
 
 const SideBar = () => {
@@ -40,29 +41,33 @@ const SideBar = () => {
     } else {
       setFilteredRouteList(
         filteredRouteList.filter((route) => {
-          return route.route_label.includes(filterValue);
+          return route.route_label.toLowerCase().includes(filterValue.toLowerCase());
         })
       );
     }
   };
 
   return (
-    <div className={classes.sideBar}>
-    <FormControl className={classes.filterField}>
-      <TextField
-        data-testid="RouteNav-filter"
-        variant="outlined"
-        label="Filter Routes"
-        value={filterValue}
-        onChange={updateFilter}
-      />
+    <>
+      <FormControl>
+        <TextField
+          variant="outlined"
+          className={classes.filterField}
+          inputProps= {{
+            "data-testid": "RouteNav-filter"
+          }}
+          label="Filter Routes"
+          value={filterValue}
+          onChange={updateFilter}
+        />
       </FormControl>
       <Divider />
+      <div className={classes.listContainer}>
       <List>
         {filteredRouteList &&
           filteredRouteList.map((route) => (
             <ListItem
-              data-testid={`RouteNav-${route.route_id}`}
+              data-testid={`RouteNav-route-${route.route_id}`}
               key={route.route_id}
               button
               component={Link}
@@ -72,7 +77,8 @@ const SideBar = () => {
             </ListItem>
           ))}
       </List>
-    </div>
+      </div>
+    </>
   );
 };
 

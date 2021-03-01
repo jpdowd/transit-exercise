@@ -5,10 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack serve --mode=development --open --hot",
+    "start:ffde": "webpack serve --mode=development --open \"Firefox Developer Edition\" --hot",
     "build": "webpack --mode=production",
-    "cypress:open": "cypress open",
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "cypress run",
+    "test:gui": "cypress open"
   },
   "repository": {
     "type": "git",

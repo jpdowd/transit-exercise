@@ -77,6 +77,7 @@ const BusData = () => {
               <MenuItem
                 value={direction.direction_id}
                 key={direction.direction_id}
+                data-testid={`BusData-directionSelection-${direction.direction_id}`}
               >
                 {direction.direction_name}
               </MenuItem>
@@ -88,7 +89,7 @@ const BusData = () => {
         <Select data-testid={'BusData-stopSelection'} value={selectedStop} onChange={updateSelectedStop}>
           {routeStops &&
             routeStops.map((stop) => (
-              <MenuItem key={stop.place_code} value={stop.place_code}>
+              <MenuItem key={stop.place_code} value={stop.place_code} data-testId={`BusData-stopSelection-${stop.place_code}`}>
                 {stop.description}
               </MenuItem>
             ))}
@@ -96,7 +97,7 @@ const BusData = () => {
       </FormControl>
       {departures &&
         departures.map((departure, index) => (
-          <Typography key={index}>
+          <Typography key={index} data-testId={`BusData-departureTimes-${index}`}>
             {getFormattedTime(departure.departure_time)}
           </Typography>
         ))}

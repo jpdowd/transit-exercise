@@ -8,7 +8,6 @@ import Typography from "@material-ui/core/Typography";
 import Sidebar from "./Sidebar";
 import BusData from "./BusData";
 import Drawer from "@material-ui/core/Drawer";
-import Grid from "@material-ui/core/Grid";
 
 const drawerWidth = 240;
 
@@ -25,10 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-  },
-  drawerContainer: {
-    height: "100%",
-    overflow: "auto",
+    overflow: 'hidden'
   },
   content: {
     flexGrow: 1,
@@ -44,7 +40,7 @@ const BusSchedules = () => {
         <CssBaseline />
         <AppBar className={classes.appBar} position="fixed">
           <Toolbar>
-            <Typography>Transit Exercise</Typography>
+            <Typography>Metro Transit Exercise</Typography>
           </Toolbar>
         </AppBar>
         <Drawer
@@ -53,11 +49,11 @@ const BusSchedules = () => {
           classes={{
             paper: classes.drawerPaper,
           }}
-          anchor="left"
         >
-          <Toolbar />
-          <div className={classes.toolbar} />
-          <Sidebar />
+          <Toolbar/>
+          <div className="sideBarContainer">
+            <Sidebar />
+          </div>
         </Drawer>
         <main className={classes.content}>
           <Toolbar />
