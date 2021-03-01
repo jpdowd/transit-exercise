@@ -49,6 +49,7 @@ const BusData = ({routeInformation}) => {
       routeId: query.get('routeId'),
     })
     setDirections(routeDirectionData)
+    setSelectedDirection('')
   }, [query.get('routeId')])
 
   useEffect(async () => {
@@ -57,6 +58,8 @@ const BusData = ({routeInformation}) => {
       directionId: selectedDirection,
     })
     setRouteStops(stopData)
+    setSelectedStop('')
+    setDepartures([])
   }, [selectedDirection])
 
   useEffect(async () => {
