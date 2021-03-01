@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
-import Typography from "@material-ui/core/Typography";
+import FormControl from "@material-ui/core/FormControl";
 import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
@@ -14,9 +14,9 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
   },
   filterField: {
-      paddingTop: theme.spacing(1),
-      paddingBotton: theme.spacing(1),
-  }
+    paddingTop: theme.spacing(1),
+    paddingBotton: theme.spacing(1),
+  },
 }));
 
 const SideBar = () => {
@@ -33,27 +33,30 @@ const SideBar = () => {
 
   const updateFilter = (event) => {
     const filterValue = event.target.value;
-    
-    if (filterValue.trim() === '') {
-        setFilteredRouteList(routeList)
-    }
 
     setFilterValue(filterValue);
-    setFilteredRouteList(filteredRouteList.filter(route => {
-        return route.route_label.includes(filterValue)
-    }))
+    if (filterValue.trim() === "") {
+      setFilteredRouteList(routeList);
+    } else {
+      setFilteredRouteList(
+        filteredRouteList.filter((route) => {
+          return route.route_label.includes(filterValue);
+        })
+      );
+    }
   };
 
   return (
     <div className={classes.sideBar}>
+    <FormControl className={classes.filterField}>
       <TextField
         data-testid="RouteNav-filter"
         variant="outlined"
         label="Filter Routes"
         value={filterValue}
         onChange={updateFilter}
-        className={classes.filterField}
       />
+      </FormControl>
       <Divider />
       <List>
         {filteredRouteList &&
