@@ -11,10 +11,11 @@ describe('It should allow bus routes and stops to be selected and display stop i
         cy.get('[data-testid="BusData-directionSelection-0"]').click()
     })
     it('Should allow you to select a stop and display stop times', () => {
+        cy.get('[data-testid*="BusData-departureTimes-"]').should('not.exist')
         cy.get('[data-testid="BusData-directionSelection"]').click()
         cy.get('[data-testid="BusData-directionSelection-0"]').click()
         cy.get('[data-testid="BusData-stopSelection"]').click()
         cy.get('[data-testid="BusData-stopSelection-FTSN"]').click()
-        cy.get('[data-testid*="BusData-departureTimes-"]').should('have.length', 12)
+        cy.get('[data-testid*="BusData-departureTimes-"]').should('have.length.greaterThan', 1)
     })
 })
