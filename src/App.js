@@ -1,10 +1,10 @@
-import React from 'react';
-import BusSchedules from './BusSchedules';
+import React from 'react'
+import BusSchedules from './BusSchedules'
 
 const App = () => {
   return (
       <BusSchedules />
-  );
-};
+  )
+}
 
-export default App;
+export default App

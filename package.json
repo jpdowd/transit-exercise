@@ -8,6 +8,7 @@
     "start:ffde": "webpack serve --mode=development --open \"Firefox Developer Edition\" --hot",
     "build": "webpack --mode=production",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "test": "cypress run",
     "test:gui": "cypress open"
   },

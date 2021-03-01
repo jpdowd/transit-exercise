@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { BrowserRouter } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import AppBar from "@material-ui/core/AppBar";
-import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
-import Sidebar from "./Sidebar";
-import BusData from "./BusData";
-import Drawer from "@material-ui/core/Drawer";
+import React, {useEffect, useState} from 'react'
+import {BrowserRouter} from 'react-router-dom'
+import {makeStyles} from '@material-ui/core/styles'
+import CssBaseline from '@material-ui/core/CssBaseline'
+import AppBar from '@material-ui/core/AppBar'
+import Toolbar from '@material-ui/core/Toolbar'
+import Typography from '@material-ui/core/Typography'
+import Sidebar from './Sidebar'
+import BusData from './BusData'
+import Drawer from '@material-ui/core/Drawer'
 
 import {getRouteInformation} from './BusSchedulesAPI.js'
 
-const drawerWidth = 240;
+const drawerWidth = 240
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
-    display: "flex",
+    display: 'flex',
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -26,16 +26,16 @@ const useStyles = makeStyles((theme) => ({
   },
   drawerPaper: {
     width: drawerWidth,
-    overflow: 'hidden'
+    overflow: 'hidden',
   },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3),
   },
-}));
+}))
 
 const BusSchedules = () => {
-  const classes = useStyles();
+  const classes = useStyles()
   const [routeInformation, setRouteInformation] = useState([])
 
   useEffect(() => {
@@ -74,7 +74,7 @@ const BusSchedules = () => {
         </main>
       </div>
     </BrowserRouter>
-  );
-};
+  )
+}
 
-export default BusSchedules;
+export default BusSchedules
