@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -8,6 +8,8 @@ import Typography from "@material-ui/core/Typography";
 import Sidebar from "./Sidebar";
 import BusData from "./BusData";
 import Drawer from "@material-ui/core/Drawer";
+
+import {getRouteInformation} from './BusSchedulesAPI.js'
 
 const drawerWidth = 240;
 
@@ -34,6 +36,17 @@ const useStyles = makeStyles((theme) => ({
 
 const BusSchedules = () => {
   const classes = useStyles();
+  const [routeInformation, setRouteInformation] = useState([])
+
+  useEffect(() => {
+    loadRouteInformation()
+  }, [])
+
+  const loadRouteInformation = async () => {
+    const newRouteData = await getRouteInformation()
+    setRouteInformation(newRouteData)
+  }
+
   return (
     <BrowserRouter>
       <div className={classes.root}>
@@ -57,7 +70,7 @@ const BusSchedules = () => {
         </Drawer>
         <main className={classes.content}>
           <Toolbar />
-          <BusData />
+          <BusData routeInformation={routeInformation} />
         </main>
       </div>
     </BrowserRouter>

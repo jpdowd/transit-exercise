@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
+import PropTypes from "prop-types";
 import { useLocation } from "react-router-dom";
 import { makeStyles } from "@material-ui/core/styles";
-import InputLabel from '@material-ui/core/InputLabel'
+import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Typography from "@material-ui/core/Typography";
+import Table from "@material-ui/core/Table";
+import TableBody from "@material-ui/core/TableBody";
+import TableCell from "@material-ui/core/TableCell";
+import TableContainer from "@material-ui/core/TableContainer";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import Paper from "@material-ui/core/Paper";
 import {
   getBusRouteDirection,
   getBusRouteStops,
@@ -17,16 +25,19 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const useStyles = makeStyles ((theme) => ({
-    formControl: {
-        margin: theme.spacing(1),
-        minWidth: 200,
-      },
-}))
+const useStyles = makeStyles((theme) => ({
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 200,
+  },
+  departureTable: {
+    width: 160,
+  },
+}));
 
-const BusData = () => {
+const BusData = ({ routeInformation }) => {
   const query = useQuery();
-  const classes = useStyles()
+  const classes = useStyles();
   const [directions, setDirections] = useState();
   const [selectedDirection, setSelectedDirection] = useState();
   const [routeStops, setRouteStops] = useState();
@@ -66,12 +77,34 @@ const BusData = () => {
     return dt.toLocaleString(DateTime.TIME_SIMPLE);
   };
 
+  const getRouteDescription = () => {
+    const routeId = query.get("routeId");
+
+    if (!routeId) {
+      return "Please select a route";
+    }
+
+    const matchingRoute = routeInformation.filter((route) => {
+      return route.route_id === routeId;
+    });
+
+    if (matchingRoute.length > 0) {
+      return `Route Selected: ${matchingRoute[0].route_label} - ${matchingRoute[0].description}`;
+    } else {
+      return "Route not found";
+    }
+  };
+
   return (
     <>
-      <Typography>Schedule for {query.get("routeId")}</Typography>
+      <Typography>{getRouteDescription()}</Typography>
       <FormControl className={classes.formControl}>
         <InputLabel>Direction</InputLabel>
-        <Select data-testid={'BusData-directionSelection'} value={selectedDirection} onChange={getStopsForDirection}>
+        <Select
+          data-testid={"BusData-directionSelection"}
+          value={selectedDirection}
+          onChange={getStopsForDirection}
+        >
           {directions &&
             directions.map((direction) => (
               <MenuItem
@@ -86,23 +119,54 @@ const BusData = () => {
       </FormControl>
       <FormControl className={classes.formControl}>
         <InputLabel>Selected Stop</InputLabel>
-        <Select data-testid={'BusData-stopSelection'} value={selectedStop} onChange={updateSelectedStop}>
+        <Select
+          data-testid={"BusData-stopSelection"}
+          value={selectedStop}
+          onChange={updateSelectedStop}
+        >
           {routeStops &&
             routeStops.map((stop) => (
-              <MenuItem key={stop.place_code} value={stop.place_code} data-testId={`BusData-stopSelection-${stop.place_code}`}>
+              <MenuItem
+                key={stop.place_code}
+                value={stop.place_code}
+                data-testId={`BusData-stopSelection-${stop.place_code}`}
+              >
                 {stop.description}
               </MenuItem>
             ))}
         </Select>
       </FormControl>
-      {departures &&
-        departures.map((departure, index) => (
-          <Typography key={index} data-testId={`BusData-departureTimes-${index}`}>
-            {getFormattedTime(departure.departure_time)}
-          </Typography>
-        ))}
+      {departures && departures.length > 0 && (
+        <TableContainer component={Paper} className={classes.departureTable}>
+          <Table>
+            <TableHead>
+              <TableCell>
+                <Typography>Next Departures</Typography>
+              </TableCell>
+            </TableHead>
+            <TableBody>
+              {departures &&
+                departures.map((departure, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Typography
+                        data-testId={`BusData-departureTimes-${index}`}
+                      >
+                        {getFormattedTime(departure.departure_time)}
+                      </Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </>
   );
+};
+
+BusData.propTypes = {
+  routeInformation: PropTypes.array,
 };
 
 export default BusData;
