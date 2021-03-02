@@ -164,7 +164,7 @@ const BusData = ({routeInformation}) => {
           <Table size="small">
             <TableHead>
               <TableCell>
-                <Typography>consts.NEXT_DEPARTURES_STRING</Typography>
+                <Typography>{consts.NEXT_DEPARTURES_STRING}</Typography>
               </TableCell>
             </TableHead>
             <TableBody>
