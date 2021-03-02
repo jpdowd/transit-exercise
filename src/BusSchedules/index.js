@@ -8,6 +8,7 @@ import Typography from '@material-ui/core/Typography'
 import Sidebar from './Sidebar'
 import BusData from './BusData'
 import Drawer from '@material-ui/core/Drawer'
+import * as consts from './busSchedules.consts'
 
 import {getRouteInformation} from './BusSchedulesAPI.js'
 
@@ -53,7 +54,7 @@ const BusSchedules = () => {
         <CssBaseline />
         <AppBar className={classes.appBar} position="fixed">
           <Toolbar>
-            <Typography>Metro Transit Exercise</Typography>
+            <Typography>{consts.TITLE_STRING}</Typography>
           </Toolbar>
         </AppBar>
         <Drawer

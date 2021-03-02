@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useReducer} from 'react'
 import PropTypes from 'prop-types'
 import {useLocation} from 'react-router-dom'
 import {makeStyles} from '@material-ui/core/styles'
@@ -19,6 +19,7 @@ import {
   getBusRouteStops,
   getDepartureInfo,
 } from './BusSchedulesAPI'
+import * as consts from './busSchedules.consts'
 import {DateTime} from 'luxon'
 
 function useQuery() {
@@ -35,45 +36,64 @@ const useStyles = makeStyles(theme => ({
   },
 }))
 
+const reducer = (state, action) => {
+  switch (action.type) {
+    case consts.ACTIONS_SET_ROUTE_ID:
+        return {...initialState, routeId: action.value}
+    case consts.ACTIONS_SET_ROUTE_DIRECTIONS:
+      return {...state, directions: action.value}
+    case consts.ACTIONS_SET_ROUTE_STOPS:
+        return {...state, routeStops: action.value}
+    case consts.ACTIONS_SET_DEPARTURES:
+        return {...state, departures: action.value}
+    case consts.ACTIONS_SET_DIRECTION:
+      return {...state, selectedDirection: action.value, selectedStop: [], departures: []}
+    case consts.ACTIONS_SET_STOP:
+      return {...state, selectedStop: action.value}
+    default:
+      return state
+  }
+}
+
+const initialState = {
+  routeId: '',
+  directions: [],
+  selectedDirection: '',
+  routeStops: [],
+  selectedStop: '',
+  departures: [],
+}
+
 const BusData = ({routeInformation}) => {
   const query = useQuery()
   const classes = useStyles()
-  const [directions, setDirections] = useState()
-  const [selectedDirection, setSelectedDirection] = useState()
-  const [routeStops, setRouteStops] = useState()
-  const [selectedStop, setSelectedStop] = useState()
-  const [departures, setDepartures] = useState([])
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(async () => {
+    const routeId = query.get('routeId')
     const routeDirectionData = await getBusRouteDirection({
-      routeId: query.get('routeId'),
+      routeId: routeId,
     })
-    setDirections(routeDirectionData)
-    setSelectedDirection('')
+    dispatch({type: consts.ACTIONS_SET_ROUTE_ID, value: routeId})
+    dispatch({type: consts.ACTIONS_SET_ROUTE_DIRECTIONS, value: routeDirectionData})
   }, [query.get('routeId')])
 
   useEffect(async () => {
     const stopData = await getBusRouteStops({
-      routeId: query.get('routeId'),
-      directionId: selectedDirection,
+      routeId: state.routeId,
+      directionId: state.selectedDirection,
     })
-    setRouteStops(stopData)
-    setSelectedStop('')
-    setDepartures([])
-  }, [selectedDirection])
+    dispatch({type: consts.ACTIONS_SET_ROUTE_STOPS, value: stopData})
+  }, [state.selectedDirection])
 
   useEffect(async () => {
     const departureData = await getDepartureInfo({
-      routeId: query.get('routeId'),
-      directionId: selectedDirection,
-      stopCode: selectedStop,
+      routeId: state.routeId,
+      directionId: state.selectedDirection,
+      stopCode: state.selectedStop,
     })
-    setDepartures(departureData.departures)
-  }, [selectedStop])
-
-  const getStopsForDirection = event =>
-    setSelectedDirection(event.target.value)
-  const updateSelectedStop = event => setSelectedStop(event.target.value)
+    dispatch({type: consts.ACTIONS_SET_DEPARTURES, value: departureData.departures})
+  }, [state.selectedStop])
 
   const getFormattedTime = timeStamp => {
     const dt = DateTime.fromSeconds(timeStamp).setZone('America/Chicago')
@@ -81,10 +101,10 @@ const BusData = ({routeInformation}) => {
   }
 
   const getRouteDescription = () => {
-    const routeId = query.get('routeId')
+    const routeId = state.routeId
 
     if (!routeId) {
-      return 'Please select a route'
+      return consts.PLEASE_SELECT_ROUTE_STRING
     }
 
     const matchingRoute = routeInformation.filter(route => {
@@ -92,9 +112,9 @@ const BusData = ({routeInformation}) => {
     })
 
     if (matchingRoute.length > 0) {
-      return `Route Selected: ${matchingRoute[0].route_label} - ${matchingRoute[0].description}`
+      return `${consts.ROUTE_SELECTED_STRING}: ${matchingRoute[0].route_label} - ${matchingRoute[0].description}`
     } else {
-      return 'Route not found'
+      return consts.ROUTE_NOT_FOUND_STRING
     }
   }
 
@@ -102,14 +122,14 @@ const BusData = ({routeInformation}) => {
     <>
       <Typography>{getRouteDescription()}</Typography>
       <FormControl className={classes.formControl}>
-        <InputLabel>Direction</InputLabel>
+        <InputLabel>{consts.DIRECTION_STRING}</InputLabel>
         <Select
           data-testid={'BusData-directionSelection'}
-          value={selectedDirection}
-          onChange={getStopsForDirection}
+          value={state.selectedDirection}
+          onChange={event => dispatch({type: consts.ACTIONS_SET_DIRECTION, value: event.target.value})}
         >
-          {directions &&
-            directions.map(direction => (
+          {state.directions &&
+            state.directions.map(direction => (
               <MenuItem
                 value={direction.direction_id}
                 key={direction.direction_id}
@@ -121,14 +141,14 @@ const BusData = ({routeInformation}) => {
         </Select>
       </FormControl>
       <FormControl className={classes.formControl}>
-        <InputLabel>Selected Stop</InputLabel>
+        <InputLabel>{consts.SELECTED_STOP_STRING}</InputLabel>
         <Select
           data-testid={'BusData-stopSelection'}
-          value={selectedStop}
-          onChange={updateSelectedStop}
+          value={state.selectedStop}
+          onChange={event => dispatch({type: consts.ACTIONS_SET_STOP, value: event.target.value})}
         >
-          {routeStops &&
-            routeStops.map(stop => (
+          {state.routeStops &&
+            state.routeStops.map(stop => (
               <MenuItem
                 key={stop.place_code}
                 value={stop.place_code}
@@ -139,17 +159,17 @@ const BusData = ({routeInformation}) => {
             ))}
         </Select>
       </FormControl>
-      {departures && departures.length > 0 && (
+      {state.departures && state.departures.length > 0 && (
         <TableContainer component={Paper} className={classes.departureTable}>
-          <Table>
+          <Table size="small">
             <TableHead>
               <TableCell>
-                <Typography>Next Departures</Typography>
+                <Typography>consts.NEXT_DEPARTURES_STRING</Typography>
               </TableCell>
             </TableHead>
             <TableBody>
-              {departures &&
-                departures.map((departure, index) => (
+              {state.departures &&
+                state.departures.map((departure, index) => (
                   <TableRow key={index}>
                     <TableCell>
                       <Typography
