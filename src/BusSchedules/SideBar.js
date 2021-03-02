@@ -7,6 +7,7 @@ import Divider from '@material-ui/core/Divider'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
 import TextField from '@material-ui/core/TextField'
+import * as consts from './busSchedules.consts'
 import {getBusRoutes} from './BusSchedulesAPI.js'
 
 const useStyles = makeStyles(theme => ({
@@ -56,7 +57,7 @@ const SideBar = () => {
           inputProps= {{
             'data-testid': 'RouteNav-filter',
           }}
-          label="Filter Routes"
+          label={consts.FILTER_ROUTES_STRING}
           value={filterValue}
           onChange={updateFilter}
         />
